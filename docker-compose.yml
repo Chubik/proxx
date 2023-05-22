@@ -1,8 +1,13 @@
 version: '3'
 services:
   proxx:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        CONTAINER_PORT: ${CONTAINER_PORT}
+        HOST_PORT: ${HOST_PORT}
     ports:
       - ${HOST_PORT}:${CONTAINER_PORT}
