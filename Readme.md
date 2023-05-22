@@ -41,10 +41,8 @@ To run the project using Docker Compose, follow these steps:
    docker-compose -f ./docker-compose.yml --env-file .env up --build
    ```
 5. Wait for the containers to build and start. Once everything is ready, you can access the Proxx game UI by opening a web browser and navigating to `http://localhost:8080`.
-
 Make sure to adjust the `HOST_PORT` and `CONTAINER_PORT` values in the `.env` file to the desired port numbers. These ports will be used to access the Proxx game UI in the browser.
 
-Please let me know if there's anything else I can help you with!
 
 ## Running Tests
 To run all tests for the game, use the following command:
