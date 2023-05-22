@@ -1,0 +1,25 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Compiled Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Compiled Go test files
+*.test
+
+# Temp files
+*~
+*.tmp
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

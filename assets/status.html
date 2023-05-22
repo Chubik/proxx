@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PROXX Game</title>
+    <style>
+        .cell {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+
+        .opened {
+            cursor: default;
+        }
+
+        .question {
+            color: blue;
+        }
+
+        .flag {
+            color: red;
+        }
+
+        .mine {
+            color: white;
+            background-color: red;
+        }
+
+        .number {
+            color: green;
+        }
+
+        .disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Game ID: <span id="playerId">{{.Player}}</span></h1>
+    <h2 id="gameState"></h2>
+    <button id="newgame">New Game</button>
+    <table>
+        {{ range $i, $row := .Board }}
+        <tr>
+            {{ range $j, $cell := $row }}
+            <td class="cell
+                {{ if eq (index $.StateBoard $i $j) 0 }}question
+                {{ else if eq (index $.StateBoard $i $j) 1 }}
+                    {{ if eq $cell -1 }}mine
+                    {{ else }}number
+                    {{ end }}
+                {{ else }}flag
+                {{ end }}
+                {{ if and (eq (index $.StateBoard $i $j) 1) (eq $cell -1) }}opened
+                {{ end }}" data-x="{{ $j }}" data-y="{{ $i }}">
+                {{ if eq (index $.StateBoard $i $j) 0 }}
+                ?
+                {{ else if eq (index $.StateBoard $i $j) 1 }}
+                {{ if eq $cell -1 }}H
+                {{ else }}{{ $cell }}
+                {{ end }}
+                {{ else }}
+                F
+                {{ end }}
+            </td>
+            {{ end }}
+        </tr>
+        {{ end }}
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const newGameButton = document.getElementById('newgame');
+            const cells = document.querySelectorAll('.cell');
+            const playerId = document.getElementById('playerId').innerText;
+
+            const gameStateElement = document.getElementById('gameState');
+            let gameState = '{{.GameState}}';
+
+            if (gameState === '0') {
+                gameStateElement.textContent = 'Playing';
+            } else if (gameState === '1') {
+                gameStateElement.textContent = 'You Won!';
+                cells.forEach(cell => cell.classList.add('disabled'));
+            } else {
+                gameStateElement.textContent = 'You Lost!';
+                cells.forEach(cell => cell.classList.add('disabled'));
+            }
+
+            const reloadPage = () => location.reload();
+
+            const handleCellClick = (e) => {
+                if (e.target.classList.contains('opened') || e.target.classList.contains('disabled')) return;
+
+                let x = e.target.getAttribute("data-x");
+                let y = e.target.getAttribute("data-y");
+
+                switch (e.which) {
+                    case 1:
+                        fetch(`/game/${playerId}/open/${x}/${y}`, { method: 'POST' })
+                            .then(reloadPage);
+                        break;
+                    case 3:
+                        let path = e.target.textContent === 'F' ? 'unflag' : 'flag';
+                        fetch(`/game/${playerId}/${path}/${x}/${y}`, { method: 'POST' })
+                            .then(reloadPage);
+                        break;
+                }
+            };
+
+            cells.forEach(cell => {
+                cell.addEventListener('mousedown', handleCellClick);
+                cell.addEventListener('contextmenu', (e) => e.preventDefault());
+            });
+
+            newGameButton.addEventListener('click', () => {
+                location.href = '/';
+            });
+        });
+    </script>
+</body>
+
+</html>
