@@ -25,8 +25,6 @@ To run the game locally, follow these steps:
    ```
 5. Open a web browser and visit `http://localhost:8080` to play the game.
 
-Доданий новий пункт в опис README для запуску проекту з використанням Docker Compose:
-
 ### Running with Docker Compose
 
 To run the project using Docker Compose, follow these steps:
