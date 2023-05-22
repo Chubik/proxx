@@ -25,9 +25,9 @@ func main() {
 
 	r := chi.NewRouter()
 
-	host := "localhost"
-	if os.Getenv("DOCKER_ENV") == "true" {
-		host = "docker"
+	host, err := os.Hostname()
+	if err != nil {
+		host = ""
 	}
 
 	r.Route("/game/{player}", func(r chi.Router) {
