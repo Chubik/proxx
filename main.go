@@ -8,6 +8,7 @@ import (
 	"proxx/board"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -16,9 +17,14 @@ const (
 
 func main() {
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = DEFAULT_PORT
+		port = "8080" //default port
 	}
 
 	gs := board.NewGameServer()
