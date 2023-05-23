@@ -90,18 +90,17 @@ func (g *Game) UnflagCell(x, y int) error {
 	return nil
 }
 
-// checkWin checks if the game has been won
 func (g *Game) checkWin() {
 	for i := range g.Board {
 		for j := range g.Board[i] {
-			if g.Board[i][j] != -1 && g.StateBoard[i][j] != Opened {
-				// If any safe cell is not opened, the game isn't won yet
+			if g.Board[i][j] != -1 && g.StateBoard[i][j] != Opened && g.StateBoard[i][j] != Flagged {
+				// If any safe cell is not opened or flagged, the game isn't won yet
 				return
 			}
 		}
 	}
 
 	// If we made it through the whole board without returning,
-	// then all safe cells are open, and the game is won
+	// then all safe cells are open or flagged, and the game is won
 	g.GameState = Won
 }

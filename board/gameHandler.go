@@ -94,11 +94,12 @@ func (gs *GameServer) OpenCellHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/game/%s", player), http.StatusFound)
 }
 
-// FlagCellHandler is an HTTP handler that flags a cell on the game board.
+// FlagOperationHandler is an HTTP handler that either flags or unflags a cell on the game board.
 // It takes the player's unique ID and the x and y coordinates of the cell as URL parameters.
 // If the game is not found or the coordinates are invalid, it returns an appropriate HTTP response.
-// After the cell is flagged, it redirects the client to the game status page.
-func (gs *GameServer) FlagCellHandler(w http.ResponseWriter, r *http.Request) {
+// After the cell is flagged or unflagged, it redirects the client to the game status page.
+// The operation argument determines whether to flag (true) or unflag (false) the cell.
+func (gs *GameServer) FlagOperationHandler(w http.ResponseWriter, r *http.Request, setFlag bool) {
 	player := chi.URLParam(r, "player")
 	xStr := chi.URLParam(r, "x")
 	yStr := chi.URLParam(r, "y")
@@ -126,52 +127,18 @@ func (gs *GameServer) FlagCellHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := game.FlagCell(x, y); err != nil {
-		log.Printf("error game ID %s: %v \n", player, err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Redirect to the game status page
-	http.Redirect(w, r, fmt.Sprintf("/game/%s", player), http.StatusFound)
-}
-
-// UnflagCellHandler is an HTTP handler that unflags a cell on the game board.
-// It takes the player's unique ID and the x and y coordinates of the cell as URL parameters.
-// If the game is not found or the coordinates are invalid, it returns an appropriate HTTP response.
-// After the cell is unflagged, it redirects the client to the game status page.
-func (gs *GameServer) UnflagCellHandler(w http.ResponseWriter, r *http.Request) {
-	player := chi.URLParam(r, "player")
-	xStr := chi.URLParam(r, "x")
-	yStr := chi.URLParam(r, "y")
-
-	gs.mu.Lock()
-	game, ok := gs.games[player]
-	gs.mu.Unlock()
-	if !ok {
-		log.Println(ERROR_GAME_NOT_FOUND)
-		http.NotFound(w, r)
-		return
-	}
-
-	x, err := strconv.Atoi(xStr)
-	if err != nil {
-		log.Printf("error game ID %s: %v \n", player, err)
-		http.Error(w, ERROR_WRONG_COORDS_FORMAT, http.StatusBadRequest)
-		return
-	}
-
-	y, err := strconv.Atoi(yStr)
-	if err != nil {
-		log.Printf("error game ID %s: %v \n", player, err)
-		http.Error(w, ERROR_WRONG_COORDS_FORMAT, http.StatusBadRequest)
-		return
-	}
-
-	if err := game.UnflagCell(x, y); err != nil {
-		log.Printf("error game ID %s: %v \n", player, err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	if setFlag {
+		if err := game.FlagCell(x, y); err != nil {
+			log.Printf("error game ID %s: %v \n", player, err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	} else {
+		if err := game.UnflagCell(x, y); err != nil {
+			log.Printf("error game ID %s: %v \n", player, err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 
 	// Redirect to the game status page

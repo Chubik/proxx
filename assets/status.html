@@ -105,7 +105,7 @@
                             .then(reloadPage);
                         break;
                     case 3:
-                        let path = e.target.textContent === 'F' ? 'unflag' : 'flag';
+                        let path = e.target.classList.contains('flag') ? 'unflag' : 'flag';
                         fetch(`/game/${playerId}/${path}/${x}/${y}`, { method: 'POST' })
                             .then(reloadPage);
                         break;
