@@ -23,6 +23,9 @@ const (
 	ERROR_GAME_NOT_FOUND      = "game not found"
 )
 
+// StatusHandler is an HTTP handler that displays the current status of the game.
+// It takes the player's unique ID as a URL parameter and renders the game state in an HTML template.
+// If the game is not found, it returns an HTTP 404 response.
 func (gs *GameServer) StatusHandler(w http.ResponseWriter, r *http.Request) {
 	player := chi.URLParam(r, "player")
 
@@ -49,6 +52,10 @@ func (gs *GameServer) StatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// OpenCellHandler is an HTTP handler that opens a cell on the game board.
+// It takes the player's unique ID and the x and y coordinates of the cell as URL parameters.
+// If the game is not found or the coordinates are invalid, it returns an appropriate HTTP response.
+// After the cell is opened, it redirects the client to the game status page.
 func (gs *GameServer) OpenCellHandler(w http.ResponseWriter, r *http.Request) {
 	player := chi.URLParam(r, "player")
 	xStr := chi.URLParam(r, "x")
@@ -87,6 +94,10 @@ func (gs *GameServer) OpenCellHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/game/%s", player), http.StatusFound)
 }
 
+// FlagCellHandler is an HTTP handler that flags a cell on the game board.
+// It takes the player's unique ID and the x and y coordinates of the cell as URL parameters.
+// If the game is not found or the coordinates are invalid, it returns an appropriate HTTP response.
+// After the cell is flagged, it redirects the client to the game status page.
 func (gs *GameServer) FlagCellHandler(w http.ResponseWriter, r *http.Request) {
 	player := chi.URLParam(r, "player")
 	xStr := chi.URLParam(r, "x")
@@ -125,6 +136,10 @@ func (gs *GameServer) FlagCellHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/game/%s", player), http.StatusFound)
 }
 
+// UnflagCellHandler is an HTTP handler that unflags a cell on the game board.
+// It takes the player's unique ID and the x and y coordinates of the cell as URL parameters.
+// If the game is not found or the coordinates are invalid, it returns an appropriate HTTP response.
+// After the cell is unflagged, it redirects the client to the game status page.
 func (gs *GameServer) UnflagCellHandler(w http.ResponseWriter, r *http.Request) {
 	player := chi.URLParam(r, "player")
 	xStr := chi.URLParam(r, "x")
@@ -163,6 +178,9 @@ func (gs *GameServer) UnflagCellHandler(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, fmt.Sprintf("/game/%s", player), http.StatusFound)
 }
 
+// StartGameHandler is an HTTP handler that starts a new game.
+// It generates a unique player ID and creates a new game with default parameters.
+// The new game is stored on the server and the client is redirected to the game status page.
 func (gs *GameServer) StartGameHandler(w http.ResponseWriter, r *http.Request) {
 	// generate unique player id
 	player := uuid.NewString()
