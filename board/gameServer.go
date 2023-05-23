@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-// GameServer відповідає за керування всіма іграми
+// GameServer responsible of store all gamse to the map
 type GameServer struct {
 	games map[string]*Game
 	mu    sync.Mutex
